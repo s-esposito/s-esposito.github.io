@@ -18,6 +18,7 @@ def get_personal_data():
                     <a href="https://s-esposito.github.io/assets/pdf/Stefano_Esposito_CV.pdf" target="_blank" style="margin-right: 15px"><i class="fa fa-address-card fa-lg"></i> CV</a>
                     <a href="mailto:stefano.esposito97@outlook.com" style="margin-right: 15px"><i class="far fa-envelope-open fa-lg"></i> Mail</a>
                     <a href="https://bsky.app/profile/s-esposito.bsky.social" target="_blank" style="margin-right: 15px"><i class="fa-brands fa-bluesky"></i> Bluesky</a>
+                    <a href="https://x.com/StefanoEsp" target="_blank" style="margin-right: 15px"><i class="fa-brands fa-x-twitter"></i> Twitter</a>
                     <a href="https://scholar.google.com/citations?user=5RhJ-eEAAAAJ&hl=it" target="_blank" style="margin-right: 15px"><i class="fa-solid fa-book"></i> Scholar</a>
                     <a href="https://github.com/s-esposito" target="_blank" style="margin-right: 15px"><i class="fab fa-github fa-lg"></i> Github</a>
                     <a href="https://www.linkedin.com/in/stefanoesposito97" target="_blank" style="margin-right: 15px"><i class="fab fa-linkedin fa-lg"></i> LinkedIn</a>
@@ -84,24 +85,26 @@ def get_author_dict():
 def generate_person_html(
     persons,
     connection=", ",
-    make_bold=True,
-    make_bold_name="Michael Niemeyer",
+    highlight=True,
+    highlight_name="Stefano Esposito",
     add_links=True,
 ):
     links = get_author_dict() if add_links else {}
     s = ""
     for p in persons:
-        string_part_i = ""
+        plain_name = ""
         for name_part_i in p.get_part("first") + p.get_part("last"):
-            if string_part_i != "":
-                string_part_i += " "
-            string_part_i += name_part_i
-        if string_part_i in links.keys():
+            if plain_name != "":
+                plain_name += " "
+            plain_name += name_part_i
+        if plain_name in links.keys():
             string_part_i = (
-                f'<a href="{links[string_part_i]}" target="_blank">{string_part_i}</a>'
+                f'<a href="{links[plain_name]}" target="_blank">{plain_name}</a>'
             )
-        if make_bold and string_part_i == make_bold_name:
-            string_part_i = f'<span style="font-weight: bold";>{make_bold_name}</span>'
+        else:
+            string_part_i = plain_name
+        if highlight and plain_name == highlight_name:
+            string_part_i = f'<span style="font-style: italic;">{string_part_i}</span>'
         if p != persons[-1]:
             string_part_i += connection
         s += string_part_i
@@ -113,10 +116,14 @@ def get_paper_entry(entry_key, entry):
     s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
     s += """</div><div class="col-sm-9">"""
 
-    if "award" in entry.fields.keys():
-        s += f"""<a href="{entry.fields['html']}" target="_blank">{entry.fields['title']}</a> <span style="color: red;">({entry.fields['award']})</span><br>"""
+    if "html" in entry.fields.keys():
+        title_html = f"""<a href="{entry.fields['html']}" target="_blank">{entry.fields['title']}</a>"""
     else:
-        s += f"""<a href="{entry.fields['html']}" target="_blank">{entry.fields['title']}</a> <br>"""
+        title_html = entry.fields["title"]
+    if "award" in entry.fields.keys():
+        s += f"""{title_html} <span style="color: red;">({entry.fields['award']})</span><br>"""
+    else:
+        s += f"""{title_html} <br>"""
 
     s += f"""{generate_person_html(entry.persons['author'])} <br>"""
     if "booktitle" in entry.fields.keys():
@@ -127,27 +134,25 @@ def get_paper_entry(entry_key, entry):
         s += f"""{entry.fields['year']} <br>"""
 
     artefacts = {
-        "html": "Project Page",
-        "pdf": "Paper",
-        "supp": "Supplemental",
-        "video": "Video",
-        "poster": "Poster",
-        "code": "Code",
+        "html": ("Project Page", "fa-solid fa-globe"),
+        "pdf": ("Paper", "fa-solid fa-file-pdf"),
+        "supp": ("Supplemental", "fa-solid fa-paperclip"),
+        "video": ("Video", "fa-solid fa-video"),
+        "poster": ("Poster", "fa-solid fa-image"),
+        "code": ("Code", "fa-brands fa-github"),
     }
-    i = 0
-    for k, v in artefacts.items():
+    links = []
+    for k, (label, icon) in artefacts.items():
         if k in entry.fields.keys():
-            if i > 0:
-                s += " / "
-            s += f"""<a href="{entry.fields[k]}" target="_blank">{v}</a>"""
-            i += 1
-        else:
-            print(f"[{entry_key}] Warning: Field {k} missing!")
+            links.append(
+                f'<a href="{entry.fields[k]}" target="_blank" style="margin-right: 10px"><i class="{icon}"></i> {label}</a>'
+            )
+    s += " ".join(links)
 
     cite = "<pre><code>@InProceedings{" + f"{entry_key}, \n"
     cite += (
         "\tauthor = {"
-        + f"{generate_person_html(entry.persons['author'], make_bold=False, add_links=False, connection=' and ')}"
+        + f"{generate_person_html(entry.persons['author'], highlight=False, add_links=False, connection=' and ')}"
         + "}, \n"
     )
     if "booktitle" in entry.fields.keys():
@@ -157,10 +162,7 @@ def get_paper_entry(entry_key, entry):
     for entr in ["title", "year"]:
         cite += f"\t{entr} = " + "{" + f"{entry.fields[entr]}" + "}, \n"
     cite += """}</pre></code>"""
-    s += (
-        " /"
-        + f"""<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{entry_key}" aria-expanded="false" aria-controls="collapseExample" style="margin-left: -6px; margin-top: -2px;">Expand bibtex</button><div class="collapse" id="collapse{entry_key}"><div class="card card-body">{cite}</div></div>"""
-    )
+    s += f"""<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{entry_key}" aria-expanded="false" aria-controls="collapseExample" style="margin-left: -6px; margin-top: -2px;"><i class="fa-solid fa-quote-right"></i> Bibtex</button><div class="collapse" id="collapse{entry_key}"><div class="card card-body">{cite}</div></div>"""
     s += """ </div> </div> </div>"""
     return s
 
@@ -232,7 +234,7 @@ def get_index_html():
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">  
