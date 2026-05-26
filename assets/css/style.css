@@ -1,11 +1,289 @@
-.custom-img-thumbnail {
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: .25rem;
-    max-width: 100%;
-    height: auto;    
+:root {
+    --color-bg: #ffffff;
+    --color-text: #1f2328;
+    --color-text-muted: #57606a;
+    --color-link: #0969da;
+    --color-link-hover: #0550ae;
+    --color-border: #d0d7de;
+    --color-card-hover-bg: #f6f8fa;
+    --color-card-hover-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+    --color-bibtex-bg: #f6f8fa;
+    --color-award: #d1242f;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Helvetica, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --color-bg: #0d1117;
+        --color-text: #e6edf3;
+        --color-text-muted: #8d96a0;
+        --color-link: #58a6ff;
+        --color-link-hover: #79c0ff;
+        --color-border: #30363d;
+        --color-card-hover-bg: #161b22;
+        --color-card-hover-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+        --color-bibtex-bg: #161b22;
+        --color-award: #ff7b72;
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    --color-bg: #0d1117;
+    --color-text: #e6edf3;
+    --color-text-muted: #8d96a0;
+    --color-link: #58a6ff;
+    --color-link-hover: #79c0ff;
+    --color-border: #30363d;
+    --color-card-hover-bg: #161b22;
+    --color-card-hover-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    --color-bibtex-bg: #161b22;
+    --color-award: #ff7b72;
+    color-scheme: dark;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Smooth color transitions when the theme changes. Element-specific transitions
+   (e.g. hover effects below) win and keep their own timing. */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, color 0.3s ease,
+        border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+    }
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: var(--color-link);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+a:hover,
+a:focus {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+}
+
+h3.display-4 {
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 0;
 }
 
 h4 {
-    margin-bottom: 1em;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.container {
+    max-width: 1080px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    line-height: 1;
+    padding: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+        transform 0.15s ease, color 0.2s ease;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    background-color: var(--color-card-hover-bg);
+    transform: scale(1.06);
+    color: var(--color-link);
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+}
+
+.custom-img-thumbnail {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.profile-photo {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 12px;
+}
+
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    white-space: nowrap;
+    margin-right: 0 !important;
+}
+
+.publication-card {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease, background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.publication-card:hover {
+    border-color: var(--color-border);
+    background-color: var(--color-card-hover-bg);
+    box-shadow: var(--color-card-hover-shadow);
+}
+
+.publication-card .col-4,
+.publication-card .col-sm-3 {
+    display: flex;
+    align-items: flex-start;
+}
+
+.publication-links {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+}
+
+.publication-links a,
+.publication-links .btn-link {
+    white-space: nowrap;
+    margin: 0 !important;
+}
+
+.btn-link {
+    padding: 0;
+    border: 0;
+    color: var(--color-link);
+    vertical-align: baseline;
+    text-decoration: none;
+    font-weight: inherit;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+    box-shadow: none;
+}
+
+.collapse .card.card-body,
+.collapsing .card.card-body {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    margin-top: 0.75rem;
+}
+
+.collapse pre,
+.collapsing pre {
+    background-color: var(--color-bibtex-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    overflow-x: auto;
+    margin-bottom: 0;
+    color: var(--color-text);
+}
+
+.collapse code,
+.collapsing code {
+    color: var(--color-text);
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+}
+
+.award {
+    color: var(--color-award);
+    font-weight: 500;
+}
+
+.footer-credits {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.footer-credits a {
+    color: var(--color-text-muted);
+}
+
+@media (max-width: 575.98px) {
+    body {
+        font-size: 0.95rem;
+    }
+    h3.display-4 {
+        font-size: 2rem;
+    }
+    h4 {
+        font-size: 1.25rem;
+    }
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .publication-card {
+        padding: 0.75rem 0.5rem;
+    }
+    .publication-card .col-4 {
+        padding-right: 0.5rem;
+    }
 }

@@ -14,18 +14,18 @@ def get_personal_data():
                     I've obtained a bachelor's degree in computer science and a master's degree in "artificial intelligence and robotics" at the <a href="https://www.uniroma1.it/en/pagina-strutturale/home">University of Rome "La Sapienza"</a>. During and after my master I have been an Erasmus student and a full-time research associate at the <a href="https://www.h-brs.de/en">Hochschule Bonn-Rhein-Sieg</a> in Bonn, Germany. I see myself as an educated programmer and a true technology enthusiast; in my spare time I enjoy learning new things, traveling, and keeping up to date with what is happening in the world. I love connecting with nature by hiking in the mountains. 
                 </p>
                 <p>For any inquiries, feel free to reach out!</p>
-                <p>
-                    <a href="https://s-esposito.github.io/assets/pdf/Stefano_Esposito_CV.pdf" target="_blank" style="margin-right: 15px"><i class="fa fa-address-card fa-lg"></i> CV</a>
-                    <a href="mailto:stefano.esposito97@outlook.com" style="margin-right: 15px"><i class="far fa-envelope-open fa-lg"></i> Mail</a>
-                    <a href="https://bsky.app/profile/s-esposito.bsky.social" target="_blank" style="margin-right: 15px"><i class="fa-brands fa-bluesky"></i> Bluesky</a>
-                    <a href="https://x.com/StefanoEsp" target="_blank" style="margin-right: 15px"><i class="fa-brands fa-x-twitter"></i> Twitter</a>
-                    <a href="https://scholar.google.com/citations?user=5RhJ-eEAAAAJ&hl=it" target="_blank" style="margin-right: 15px"><i class="fa-solid fa-book"></i> Scholar</a>
-                    <a href="https://github.com/s-esposito" target="_blank" style="margin-right: 15px"><i class="fab fa-github fa-lg"></i> Github</a>
-                    <a href="https://www.linkedin.com/in/stefanoesposito97" target="_blank" style="margin-right: 15px"><i class="fab fa-linkedin fa-lg"></i> LinkedIn</a>
+                <p class="social-links">
+                    <a href="https://s-esposito.github.io/assets/pdf/Stefano_Esposito_CV.pdf" target="_blank"><i class="fa fa-address-card fa-lg"></i> CV</a>
+                    <a href="mailto:stefano.esposito97@outlook.com"><i class="far fa-envelope-open fa-lg"></i> Mail</a>
+                    <a href="https://bsky.app/profile/s-esposito.bsky.social" target="_blank"><i class="fa-brands fa-bluesky"></i> Bluesky</a>
+                    <a href="https://x.com/StefanoEsp" target="_blank"><i class="fa-brands fa-x-twitter"></i> Twitter</a>
+                    <a href="https://scholar.google.com/citations?user=5RhJ-eEAAAAJ&hl=it" target="_blank"><i class="fa-solid fa-book"></i> Scholar</a>
+                    <a href="https://github.com/s-esposito" target="_blank"><i class="fab fa-github fa-lg"></i> Github</a>
+                    <a href="https://www.linkedin.com/in/stefanoesposito97" target="_blank"><i class="fab fa-linkedin fa-lg"></i> LinkedIn</a>
                 </p>
     """
     footer = """
-            <div class="col-sm-12" style="">
+            <div class="col-sm-12 footer-credits">
                 <p>
                     Website template provided by <a href="https://github.com/m-niemeyer/m-niemeyer.github.io" target="_blank">Michael Niemeyer</a>. <br>
                     <a href="https://m-niemeyer.github.io/" target="_blank">&#9883;</a>
@@ -112,26 +112,26 @@ def generate_person_html(
 
 
 def get_paper_entry(entry_key, entry):
-    s = """<div style="margin-bottom: 2em;"> <div class="row"><div class="col-sm-3">"""
+    s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
     s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
-    s += """</div><div class="col-sm-9">"""
+    s += """</div><div class="col-8 col-sm-9">"""
 
     if "html" in entry.fields.keys():
         title_html = f"""<a href="{entry.fields['html']}" target="_blank">{entry.fields['title']}</a>"""
     else:
         title_html = entry.fields["title"]
     if "award" in entry.fields.keys():
-        s += f"""{title_html} <span style="color: red;">({entry.fields['award']})</span><br>"""
+        s += f"""{title_html} <span class="award">({entry.fields['award']})</span><br>"""
     else:
         s += f"""{title_html} <br>"""
 
     s += f"""{generate_person_html(entry.persons['author'])} <br>"""
     if "booktitle" in entry.fields.keys():
-        s += f"""<span style="font-style: italic;">{entry.fields['booktitle']}</span>, {entry.fields['year']} <br>"""
+        s += f"""<span style="font-style: italic;">{entry.fields['booktitle']}</span>, {entry.fields['year']}"""
     elif "note" in entry.fields.keys():
-        s += f"""<span style="font-style: italic;">{entry.fields['note']}</span>, {entry.fields['year']} <br>"""
+        s += f"""<span style="font-style: italic;">{entry.fields['note']}</span>, {entry.fields['year']}"""
     else:
-        s += f"""{entry.fields['year']} <br>"""
+        s += f"""{entry.fields['year']}"""
 
     artefacts = {
         "html": ("Project Page", "fa-solid fa-globe"),
@@ -145,9 +145,8 @@ def get_paper_entry(entry_key, entry):
     for k, (label, icon) in artefacts.items():
         if k in entry.fields.keys():
             links.append(
-                f'<a href="{entry.fields[k]}" target="_blank" style="margin-right: 10px"><i class="{icon}"></i> {label}</a>'
+                f'<a href="{entry.fields[k]}" target="_blank"><i class="{icon}"></i> {label}</a>'
             )
-    s += " ".join(links)
 
     cite = "<pre><code>@InProceedings{" + f"{entry_key}, \n"
     cite += (
@@ -162,29 +161,34 @@ def get_paper_entry(entry_key, entry):
     for entr in ["title", "year"]:
         cite += f"\t{entr} = " + "{" + f"{entry.fields[entr]}" + "}, \n"
     cite += """}</pre></code>"""
-    s += f"""<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{entry_key}" aria-expanded="false" aria-controls="collapseExample" style="margin-left: -6px; margin-top: -2px;"><i class="fa-solid fa-quote-right"></i> Bibtex</button><div class="collapse" id="collapse{entry_key}"><div class="card card-body">{cite}</div></div>"""
-    s += """ </div> </div> </div>"""
+
+    bibtex_button = f"""<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{entry_key}" aria-expanded="false" aria-controls="collapse{entry_key}"><i class="fa-solid fa-quote-right"></i> Bibtex</button>"""
+    s += f"""<div class="publication-links">{' '.join(links)}{bibtex_button}</div>"""
+    s += f"""<div class="collapse" id="collapse{entry_key}"><div class="card card-body">{cite}</div></div>"""
+    s += """</div></div></div>"""
     return s
 
 
 def get_talk_entry(entry_key, entry):
-    s = """<div style="margin-bottom: 2em;"> <div class="row"><div class="col-sm-3">"""
+    s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
     s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
-    s += """</div><div class="col-sm-9">"""
+    s += """</div><div class="col-8 col-sm-9">"""
     s += f"""{entry.fields['title']}<br>"""
-    s += f"""<span style="font-style: italic;">{entry.fields['booktitle']}</span>, {entry.fields['year']} <br>"""
+    s += f"""<span style="font-style: italic;">{entry.fields['booktitle']}</span>, {entry.fields['year']}"""
 
-    artefacts = {"slides": "Slides", "video": "Recording"}
-    i = 0
-    for k, v in artefacts.items():
+    artefacts = {
+        "slides": ("Slides", "fa-solid fa-file-powerpoint"),
+        "video": ("Recording", "fa-solid fa-video"),
+    }
+    links = []
+    for k, (label, icon) in artefacts.items():
         if k in entry.fields.keys():
-            if i > 0:
-                s += " / "
-            s += f"""<a href="{entry.fields[k]}" target="_blank">{v}</a>"""
-            i += 1
-        else:
-            print(f"[{entry_key}] Warning: Field {k} missing!")
-    s += """ </div> </div> </div>"""
+            links.append(
+                f'<a href="{entry.fields[k]}" target="_blank"><i class="{icon}"></i> {label}</a>'
+            )
+    if links:
+        s += f"""<div class="publication-links">{' '.join(links)}</div>"""
+    s += """</div></div></div>"""
     return s
 
 
@@ -237,13 +241,28 @@ def get_index_html():
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">  
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Theme init: applied before paint to avoid flash of wrong theme -->
+    <script>
+    (function() {{
+        try {{
+            var saved = localStorage.getItem('theme');
+            if (saved === 'light' || saved === 'dark') {{
+                document.documentElement.setAttribute('data-theme', saved);
+            }}
+        }} catch (e) {{}}
+    }})();
+    </script>
 
     <title>{name[0] + ' ' + name[1]}</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     </head>
 
     <body>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle color theme">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+        </button>
         <div class="container">
             <div class="row" style="margin-top: 3em;">
                 <div class="col-sm-12" style="margin-bottom: 2em;">
@@ -253,8 +272,8 @@ def get_index_html():
                 <div class="col-md-8" style="">
                     {bio_text}
                 </div>
-                <div class="col-md-4" style="">
-                    <img src="assets/img/profile.jpg" class="custom-img-thumbnail" width="280px" alt="Profile picture">
+                <div class="col-md-4">
+                    <img src="assets/img/profile.jpg" class="custom-img-thumbnail profile-photo" alt="Profile picture">
                 </div>
             </div>
             <div class="row" style="margin-top: 2em;">
@@ -287,6 +306,50 @@ def get_index_html():
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
+        <!-- Theme toggle: cycles auto (OS) -> light -> dark -> auto -->
+        <script>
+        (function() {{
+            var btn = document.getElementById('theme-toggle');
+            if (!btn) return;
+            var root = document.documentElement;
+            var ICONS = {{
+                auto: '<i class="fa-solid fa-circle-half-stroke"></i>',
+                light: '<i class="fa-solid fa-sun"></i>',
+                dark: '<i class="fa-solid fa-moon"></i>'
+            }};
+            var LABELS = {{
+                auto: 'Theme: follows system. Click to switch to light.',
+                light: 'Theme: light. Click to switch to dark.',
+                dark: 'Theme: dark. Click to follow system.'
+            }};
+            function getState() {{
+                try {{
+                    var v = localStorage.getItem('theme');
+                    if (v === 'light' || v === 'dark') return v;
+                }} catch (e) {{}}
+                return 'auto';
+            }}
+            function applyState(state) {{
+                if (state === 'auto') {{
+                    root.removeAttribute('data-theme');
+                    try {{ localStorage.removeItem('theme'); }} catch (e) {{}}
+                }} else {{
+                    root.setAttribute('data-theme', state);
+                    try {{ localStorage.setItem('theme', state); }} catch (e) {{}}
+                }}
+                btn.innerHTML = ICONS[state];
+                btn.setAttribute('aria-label', LABELS[state]);
+                btn.setAttribute('title', LABELS[state]);
+            }}
+            applyState(getState());
+            btn.addEventListener('click', function() {{
+                var current = getState();
+                var next = current === 'auto' ? 'light' : current === 'light' ? 'dark' : 'auto';
+                applyState(next);
+            }});
+        }})();
+        </script>
     </body>
 
     </html>

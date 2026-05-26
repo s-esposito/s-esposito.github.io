@@ -35,9 +35,15 @@ The talks section is currently commented out inside the HTML template in `get_in
 
 `get_talk_entry` reads `img`, `title`, `booktitle`, `year`, plus optional `slides` and `video`.
 
-### Author bolding
+### Author highlighting
 
-`generate_person_html` bolds the name passed as `make_bold_name`, which defaults to `"Michael Niemeyer"` from the upstream template. The site owner's name (`"Stefano Esposito"`) is **not** currently bolded because of this default — if changing the author rendering, update the default in [build.py:88](build.py#L88) rather than passing the name at every call site.
+`generate_person_html` italicizes the name passed as `highlight_name`, which defaults to `"Stefano Esposito"`. The comparison runs against the *plain* name (before any author-dict link wrapping), so an author with both a link and a highlight will get both. Pass `highlight=False` when rendering the BibTeX preview to suppress it.
+
+## Styling
+
+[assets/css/style.css](assets/css/style.css) drives the visual design. Bootstrap 4 is still loaded from CDN for grid/collapse, but most paint properties (colors, type, card hover, spacing) are overridden via custom rules. Theme tokens are CSS variables in `:root`, with a `@media (prefers-color-scheme: dark)` block that re-defines them — there is no JS toggle and no light/dark class. Key hooks added in [build.py](build.py): `.publication-card` (the outer paper/talk wrapper), `.publication-links` (icon-link row + Bibtex button), `.social-links` (bio social row), `.profile-photo` (bio photo, replaces the old hardcoded `width="280px"`), `.award`, `.footer-credits`.
+
+Publication cards use a `col-4 col-sm-3` / `col-8 col-sm-9` grid so the thumbnail stays beside the text on phones at a smaller ratio (Bootstrap 4's bare `col-sm-*` would have stacked them into oversized full-width blocks below 576px).
 
 ## Assets
 
