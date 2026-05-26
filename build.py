@@ -169,6 +169,40 @@ def get_paper_entry(entry_key, entry):
     return s
 
 
+def get_app_entry(entry_key, entry):
+    s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
+    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="App image">"""
+    s += """</div><div class="col-8 col-sm-9">"""
+
+    primary_url = entry.fields.get("html") or entry.fields.get("code")
+    if primary_url:
+        title_html = f"""<a href="{primary_url}" target="_blank">{entry.fields['title']}</a>"""
+    else:
+        title_html = entry.fields["title"]
+    s += f"""{title_html} <br>"""
+
+    if "note" in entry.fields.keys():
+        s += f"""<span style="font-style: italic;">{entry.fields['note']}</span>, {entry.fields['year']}"""
+    else:
+        s += f"""{entry.fields['year']}"""
+
+    artefacts = {
+        "html": ("Project Page", "fa-solid fa-globe"),
+        "code": ("Code", "fa-brands fa-github"),
+        "video": ("Video", "fa-solid fa-video"),
+    }
+    links = []
+    for k, (label, icon) in artefacts.items():
+        if k in entry.fields.keys():
+            links.append(
+                f'<a href="{entry.fields[k]}" target="_blank"><i class="{icon}"></i> {label}</a>'
+            )
+    if links:
+        s += f"""<div class="publication-links">{' '.join(links)}</div>"""
+    s += """</div></div></div>"""
+    return s
+
+
 def get_talk_entry(entry_key, entry):
     s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
     s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
@@ -202,6 +236,16 @@ def get_publications_html():
     return s
 
 
+def get_apps_html():
+    parser = bibtex.Parser()
+    bib_data = parser.parse_file("apps_list.bib")
+    keys = bib_data.entries.keys()
+    s = ""
+    for k in keys:
+        s += get_app_entry(k, bib_data.entries[k])
+    return s
+
+
 def get_talks_html():
     parser = bibtex.Parser()
     bib_data = parser.parse_file("talk_list.bib")
@@ -214,6 +258,7 @@ def get_talks_html():
 
 def get_index_html():
     pub = get_publications_html()
+    apps = get_apps_html()
     talks = get_talks_html()
     name, bio_text, footer = get_personal_data()
     s = f"""
@@ -280,6 +325,12 @@ def get_index_html():
                 <div class="col-sm-12" style="">
                     <h4>Publications</h4>
                     {pub}
+                </div>
+            </div>
+            <div class="row" style="margin-top: 3em;">
+                <div class="col-sm-12" style="">
+                    <h4>Software</h4>
+                    {apps}
                 </div>
             </div>
             <!--
