@@ -32,7 +32,7 @@ The talks section is currently commented out inside the HTML template in `get_in
 - `html`, `pdf`, `supp`, `video`, `poster`, `code` — render as icon-link buttons in a `.publication-links` row.
 - `award` — renders in `.award` (accent color) next to the title.
 - `note` — used in place of `booktitle` for non-conference items (e.g. arXiv, GitHub).
-- `highlight = {true}` — marks a paper as most relevant to current research; the card gets the `.highlighted` class (tinted background + accent bar), shown in place in the full list.
+- `highlight = {true}` — marks a paper as most relevant to current research; the card gets the `.highlighted` class (tinted background), shown in place in the full list.
 - `equal = {N}` — the first N authors get a `*` and the venue line gets a muted "(* equal contribution)" note (`.equal-note`).
 
 `get_app_entry` (software in [apps_list.bib](apps_list.bib)) reads `img`, `title`, `year`, and supports `html` / `code` / `video` as link buttons plus `note` as an italic description line. No authors or BibTeX expand button.

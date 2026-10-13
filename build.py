@@ -348,6 +348,7 @@ def get_index_html():
             <div class="row" style="margin-top: 2em;">
                 <div class="col-sm-12" style="">
                     <h4>Publications</h4>
+                    <p class="highlight-legend"><span class="highlight-swatch" aria-hidden="true"></span>Highlighted papers are the most relevant to my current research.</p>
                     {pub}
                 </div>
             </div>
