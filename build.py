@@ -8,7 +8,7 @@ def get_personal_data():
                 <p>I am a final-year PhD student at the <a href="https://uni-tuebingen.de/en/">University of Tübingen</a>, part of the <a href="https://uni-tuebingen.de/en/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/autonomous-vision/home/">Autonomous Vision Group</a> led by <a href="https://www.cvlibs.net/">Prof. Andreas Geiger</a>, and I work in close collaboration with <a href="https://about.meta.com/realitylabs/">Meta Reality Labs</a> through <a href="https://ellis.eu/student/2023-stefano-esposito">ELLIS</a>.</p>
                 <p>
                     <span style="font-weight: bold;">Research:</span>
-                    I work on 3D and 4D reconstruction from images and video. My current research bridges large generative and learned priors with per-scene optimization: for example, aligning image-to-3D foundation models to the observed input at test time (GenIA), or learning to optimize 3D Gaussian Splatting (Learn2Splat). Previously, I worked on neural fields and layered mesh representations for efficient, high-quality novel view synthesis (Volumetric Surfaces).
+                    I work on 3D and 4D reconstruction from images and video. My current research bridges learned generative priors with per-scene optimization: feed-forward and pixel-aligned generative 3D reconstruction (LaRa, GenIA), and data-driven efficient 3D Gaussian Splatting optimizers (Learn2Splat). Previously, I worked on neural fields and layered mesh representations for efficient, high-quality novel view synthesis (Volumetric Surfaces).
                 </p>
                 <p>
                     <span style="font-weight: bold;">Bio:</span> 
