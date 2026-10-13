@@ -79,6 +79,12 @@ def get_author_dict():
         "Haofei Xu": "https://haofeixu.github.io/",
         "Siyu Tang": "https://inf.ethz.ch/people/person-detail.MjYyNzgw.TGlzdC8zMDQsLTg3NDc3NjI0MQ==.html",
         "Donato Crisostomi": "https://crisostomi.com/",
+        "Naama Pearl": "https://naamapearl.github.io/",
+        "Polina Karpikova": "https://poliik.github.io/",
+        "Jonathon Luiten": "https://scholar.google.com/citations?user=XpOqG0cAAAAJ&hl=en",
+        "Amit Peleg": "https://amitpeleg.github.io/",
+        "Patricia Gschoßmann": "https://patriciagschossmann.github.io/",
+        "Gerard Pons-Moll": "https://virtualhumans.mpi-inf.mpg.de/people/pons-moll.html",
     }
 
 
@@ -88,10 +94,11 @@ def generate_person_html(
     highlight=True,
     highlight_name="Stefano Esposito",
     add_links=True,
+    equal=0,
 ):
     links = get_author_dict() if add_links else {}
     s = ""
-    for p in persons:
+    for i, p in enumerate(persons):
         plain_name = ""
         for name_part_i in p.get_part("first") + p.get_part("last"):
             if plain_name != "":
@@ -105,6 +112,8 @@ def generate_person_html(
             string_part_i = plain_name
         if highlight and plain_name == highlight_name:
             string_part_i = f'<span style="font-style: italic;">{string_part_i}</span>'
+        if i < equal:
+            string_part_i += "<sup>*</sup>"
         if p != persons[-1]:
             string_part_i += connection
         s += string_part_i
@@ -112,7 +121,10 @@ def generate_person_html(
 
 
 def get_paper_entry(entry_key, entry):
-    s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
+    card_class = "publication-card"
+    if entry.fields.get("highlight", "").lower() == "true":
+        card_class += " highlighted"
+    s = f"""<div class="{card_class}"><div class="row"><div class="col-4 col-sm-3">"""
     s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
     s += """</div><div class="col-8 col-sm-9">"""
 
@@ -125,13 +137,16 @@ def get_paper_entry(entry_key, entry):
     else:
         s += f"""{title_html} <br>"""
 
-    s += f"""{generate_person_html(entry.persons['author'])} <br>"""
+    equal = int(entry.fields.get("equal", 0))
+    s += f"""{generate_person_html(entry.persons['author'], equal=equal)} <br>"""
     if "booktitle" in entry.fields.keys():
         s += f"""<span style="font-style: italic;">{entry.fields['booktitle']}</span>, {entry.fields['year']}"""
     elif "note" in entry.fields.keys():
         s += f"""<span style="font-style: italic;">{entry.fields['note']}</span>, {entry.fields['year']}"""
     else:
         s += f"""{entry.fields['year']}"""
+    if equal:
+        s += """ <span class="equal-note">(* equal contribution)</span>"""
 
     artefacts = {
         "html": ("Project Page", "fa-solid fa-globe"),
