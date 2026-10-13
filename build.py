@@ -1,3 +1,4 @@
+import html
 from pybtex.database.input import bibtex
 
 
@@ -125,7 +126,7 @@ def get_paper_entry(entry_key, entry):
     if entry.fields.get("highlight", "").lower() == "true":
         card_class += " highlighted"
     s = f"""<div class="{card_class}"><div class="row"><div class="col-4 col-sm-3">"""
-    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
+    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="{html.escape(entry.fields['title'])}" loading="lazy" decoding="async">"""
     s += """</div><div class="col-8 col-sm-9">"""
 
     if "html" in entry.fields.keys():
@@ -186,7 +187,7 @@ def get_paper_entry(entry_key, entry):
 
 def get_app_entry(entry_key, entry):
     s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
-    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="App image">"""
+    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="{html.escape(entry.fields['title'])}" loading="lazy" decoding="async">"""
     s += """</div><div class="col-8 col-sm-9">"""
 
     primary_url = entry.fields.get("html") or entry.fields.get("code")
@@ -197,7 +198,7 @@ def get_app_entry(entry_key, entry):
     s += f"""{title_html} <br>"""
 
     if "note" in entry.fields.keys():
-        s += f"""<span style="font-style: italic;">{entry.fields['note']}</span>, {entry.fields['year']}"""
+        s += f"""<span style="font-style: italic;">{entry.fields['note'].rstrip('.')}</span>, {entry.fields['year']}"""
     else:
         s += f"""{entry.fields['year']}"""
 
@@ -220,7 +221,7 @@ def get_app_entry(entry_key, entry):
 
 def get_talk_entry(entry_key, entry):
     s = """<div class="publication-card"><div class="row"><div class="col-4 col-sm-3">"""
-    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="Project image">"""
+    s += f"""<img src="{entry.fields['img']}" class="img-fluid custom-img-thumbnail" alt="{html.escape(entry.fields['title'])}" loading="lazy" decoding="async">"""
     s += """</div><div class="col-8 col-sm-9">"""
     s += f"""{entry.fields['title']}<br>"""
     s += f"""<span style="font-style: italic;">{entry.fields['booktitle']}</span>, {entry.fields['year']}"""
@@ -276,6 +277,7 @@ def get_index_html():
     apps = get_apps_html()
     talks = get_talks_html()
     name, bio_text, footer = get_personal_data()
+    description = "Final-year PhD student at the University of Tübingen working on 3D and 4D reconstruction from images and video."
     s = f"""
     <!doctype html>
     <html lang="en">
@@ -296,8 +298,8 @@ def get_index_html():
     </script>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom CSS -->
@@ -316,6 +318,13 @@ def get_index_html():
     </script>
 
     <title>{name[0] + ' ' + name[1]}</title>
+    <meta name="description" content="{description}">
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="{name[0] + ' ' + name[1]}">
+    <meta property="og:description" content="{description}">
+    <meta property="og:url" content="https://s-esposito.github.io/">
+    <meta property="og:image" content="https://s-esposito.github.io/assets/img/profile.jpg">
+    <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     </head>
 
@@ -362,15 +371,12 @@ def get_index_html():
         </div>
 
         <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        <!-- jQuery first, then Bootstrap JS bundle (includes Popper) -->
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
 
         <!-- Theme toggle: cycles auto (OS) -> light -> dark -> auto -->

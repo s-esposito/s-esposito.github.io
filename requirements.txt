@@ -1,2 +1,2 @@
 black
-pybtex
+pybtex==0.26.1

@@ -4,16 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A static personal academic homepage hosted on GitHub Pages at `s-esposito.github.io`. The site is generated from Python: [build.py](build.py) reads BibTeX files and emits a single [index.html](index.html). The repo is a fork of [m-niemeyer/m-niemeyer.github.io](https://github.com/m-niemeyer/m-niemeyer.github.io) — keep the footer credit to Michael Niemeyer intact.
+A static personal academic homepage hosted on GitHub Pages at `s-esposito.github.io`. The site is generated from Python: [build.py](build.py) reads BibTeX files and emits a single `index.html`, built and deployed by GitHub Actions. The repo is a fork of [m-niemeyer/m-niemeyer.github.io](https://github.com/m-niemeyer/m-niemeyer.github.io) — keep the footer credit to Michael Niemeyer intact.
 
 ## Build
 
 ```bash
-pip install -r requirements.txt   # pybtex, black
-python build.py                    # regenerates index.html in place
+pip install -r requirements.txt   # pybtex (pinned), black
+python build.py                    # writes index.html for local preview
 ```
 
-`index.html` is a committed build artifact, not source — regenerate and commit it whenever [build.py](build.py), [publication_list.bib](publication_list.bib), [apps_list.bib](apps_list.bib), or [talk_list.bib](talk_list.bib) change. There is no test suite, linter config, or CI build step; GitHub Pages serves the committed `index.html` directly.
+`index.html` is a build artifact and is **not committed** (it's in `.gitignore`). On every push to `master`, [.github/workflows/deploy.yml](.github/workflows/deploy.yml) runs `build.py`, copies `index.html` + `assets/` into `_site/`, and deploys it to GitHub Pages (Pages source = "GitHub Actions"). So to publish, edit [build.py](build.py) or the `.bib` files and push; run `build.py` locally only to preview. Only `index.html` and `assets/` are served — anything else at the repo root is not deployed. There is no test suite or linter config.
 
 ## Architecture
 
@@ -54,5 +54,6 @@ Publication cards use a `col-4 col-sm-3` / `col-8 col-sm-9` grid so the thumbnai
 - `assets/img/profile.jpg` — main profile photo
 - `assets/img/publications/*` — publication thumbnails referenced by `img` fields in [publication_list.bib](publication_list.bib)
 - `assets/img/apps/*` — software/app thumbnails referenced by `img` fields in [apps_list.bib](apps_list.bib)
+- Thumbnails are shown at ~250px wide: save them as ~640px-wide JPEGs (≈50–100 KB), not full-resolution PNGs. They render with `loading="lazy"` and the entry title as `alt`.
 - `assets/pdf/` — CV and other linked PDFs
 - `assets/css/style.css` — custom styles layered on top of Bootstrap 4 (loaded from CDN in the template)
